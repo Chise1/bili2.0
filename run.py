@@ -2,9 +2,7 @@ import sys
 import signal
 import threading
 import asyncio
-
 import aiohttp
-
 import conf_loader
 import notifier
 import bili_sched
@@ -39,9 +37,7 @@ from danmu import raffle_handler
 # 实物抽奖
 from substance.monitor_substance_raffle import SubstanceRaffleMonitor
 from dyn.monitor_dyn_raffle import DynRaffleMonitor
-
 loop = asyncio.get_event_loop()
-
 dict_user = conf_loader.read_user()
 dict_bili = conf_loader.read_bili()
 dict_color = conf_loader.read_color()

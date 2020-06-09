@@ -1,6 +1,4 @@
 from enum import IntEnum
-
-
 class TaskType(IntEnum):
     FORCED = 0
     SCHED = 1

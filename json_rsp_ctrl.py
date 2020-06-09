@@ -1,5 +1,4 @@
 import enum
-
 import attr
 import pampy
 
@@ -14,10 +13,8 @@ class JsonRspType(enum.IntEnum):
 
 class In:
     __slots__ = ('_value',)
-
     def __init__(self, value):
         self._value = value
-
     def __call__(self, value):
         return self._value in value
 

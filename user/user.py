@@ -27,7 +27,7 @@ class User:
 
     def __init__(
             self, dict_user: dict, task_ctrl: dict, task_arrangement: dict, dict_bili: dict, force_sleep: Callable):
-        self.id = next(self._ids)
+        self.id = dict_user['id']
         self.force_sleep = force_sleep
         self.name = dict_user['username']
         self.password = dict_user['password']
