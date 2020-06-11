@@ -72,7 +72,7 @@ class Users:
 
 
 class Notifier:
-    __slots__ = ('_loop', '_users', '_scheduler',)
+    __slots__ = ('_loop', '_users', '_scheduler', '_pipe')
 
     def __init__(self, loop=None):
         if loop is None:
@@ -298,3 +298,16 @@ async def add_user(**kwargs):
 
 def get_users(user_id: int):
     return var_notifier.get_users(user_id)
+
+
+from multiprocessing import connection
+
+
+def register_pipe(pipe: connection.Connection):
+    """
+    给notifier创建一个进程间通信的管道
+    :param pipe:
+    :return:
+    """
+
+    var_notifier._pipe = pipe

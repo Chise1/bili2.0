@@ -3,10 +3,7 @@ import signal
 import threading
 import asyncio
 import time
-
 import aiohttp
-import requests
-from Service.user_info import get_userInfo
 import conf_loader
 import notifier
 import bili_sched
@@ -14,25 +11,10 @@ import printer
 import bili_statistics
 from console_cmd import ConsoleCmd
 from tasks.login import LoginTask
-from tasks.live_daily_job import (
-    HeartBeatTask,
-    OpenSilverBoxTask,
-    RecvDailyBagTask,
-    SignTask,
-    WatchTvTask,
-    SignFansGroupsTask,
-    SendGiftTask,
-    ExchangeSilverCoinTask
-)
-from tasks.main_daily_job import (
-    JudgeCaseTask,
-    BiliMainTask,
-    DahuiyuanTask
-)
-from tasks.manga_daily_job import (
-    ShareComicTask,
-    MangaSignTask,
-)
+from tasks.live_daily_job import (HeartBeatTask, OpenSilverBoxTask, RecvDailyBagTask, SignTask, WatchTvTask,
+                                  SignFansGroupsTask, SendGiftTask, ExchangeSilverCoinTask)
+from tasks.main_daily_job import (JudgeCaseTask, BiliMainTask, DahuiyuanTask)
+from tasks.manga_daily_job import (ShareComicTask, MangaSignTask, )
 from tasks.utils import UtilsTask
 # 弹幕
 from danmu.bili_danmu_monitor import DanmuPrinter, DanmuRaffleMonitor
@@ -43,8 +25,17 @@ from substance.monitor_substance_raffle import SubstanceRaffleMonitor
 from dyn.monitor_dyn_raffle import DynRaffleMonitor
 from Service.Crsa import rsa_long_decrypt
 
-def run(user_info:dict):
-    user_info['password']=rsa_long_decrypt(eval(user_info['password']))
+from multiprocessing import connection
+
+
+def run(user_info: dict, pipe: connection.Connection):
+    """
+    :param user_info: 用户信息
+    :param pipe:进程间通信管道
+    :return:
+    """
+    notifier.register_pipe(pipe)
+    user_info['password'] = rsa_long_decrypt(eval(user_info['password']))
     print(user_info['password'])
     loop = asyncio.get_event_loop()
     dict_bili = conf_loader.read_bili()
@@ -172,12 +163,11 @@ def run(user_info:dict):
     if console_thread is not None:
         console_thread.join()
 
-
-from multiprocessing import Process
+from multiprocessing import Process,Pipe
 from Service.user_info import get_all_userInfo, get_userInfo
-
 if __name__ == '__main__':
     users = get_all_userInfo()
+    pipe0,pip1=Pipe()
     for user_info in users:
-        Process(target=run, args=(user_info,)).start()
+        Process(target=run, args=(user_info,pip1)).start()
     time.sleep(100)

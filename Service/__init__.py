@@ -8,5 +8,5 @@
 @info    :服务端操作
 """
 BASE_URL="http://127.0.0.1:8000/Slaver/"
-server_id="af32b08d-4dfd-4264-8fbd-90296d4f5874"
+server_id="0612c18a-b321-42cf-a2d1-09d1d4e1be1a"
 APPSERECT="560c52ccd288fed045859ed18bffd973"
