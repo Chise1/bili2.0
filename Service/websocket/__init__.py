@@ -55,7 +55,8 @@ class Client(WebsocketClient):
         根据获取到的account_id，启动或重启account_id对应的进程,
         :return:
         """
-        msg: dict = json.loads(message)
+
+        msg: dict = json.loads(message)['message']
         if check_sign(msg):
             if self.cbk:
                 self.cbk(self, msg)
@@ -72,11 +73,12 @@ class Client(WebsocketClient):
             self.account_pipe[user_info['id']] = (parent_pipe, child_pipe)
             process = self.create_process(child_pipe, user_info)
             self.pro_list[user_info['id']] = process
-        self.run(address + "/" + server_id.replace('-','')+"/")
+        self.run(address + "/" + server_id.replace('-', '') + "/")
 
 
 def test_cbk(self: Client, msg: dict):
-    print(msg)
+    print("获取msg:", msg)
+
     if msg['info'] == "restart":  # 重启进程
         for i in self.pro_list:
             if i == msg['account_id']:

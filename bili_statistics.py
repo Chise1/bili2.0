@@ -1,8 +1,6 @@
 from typing import Optional
 from collections import deque
-
 import attr
-
 from utils import curr_time
 
 

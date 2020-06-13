@@ -37,6 +37,7 @@ from danmu import raffle_handler
 # 实物抽奖
 from substance.monitor_substance_raffle import SubstanceRaffleMonitor
 from dyn.monitor_dyn_raffle import DynRaffleMonitor
+
 loop = asyncio.get_event_loop()
 dict_user = conf_loader.read_user()
 dict_bili = conf_loader.read_bili()
@@ -44,6 +45,8 @@ dict_color = conf_loader.read_color()
 dict_ctrl = conf_loader.read_ctrl()
 dict_task = conf_loader.read_task()
 printer.init_config(dict_color, dict_ctrl['print_control']['danmu'])
+
+
 ############################################################################
 ############################################################################
 # 👇users 录入程序
@@ -70,6 +73,8 @@ async def init_users():
 
 
 loop.run_until_complete(init_users())
+
+
 ############################################################################
 ############################################################################
 # 👇重复任务录入程序
@@ -78,18 +83,18 @@ loop.run_until_complete(init_users())
 # 时间间隔为小时，同时每次休眠结束都会计时归零，重新从当前时间计算时间间隔
 # 下面表示每隔多少小时执行一次
 def add_daily_jobs():
-    bili_sched.add_daily_jobs(HeartBeatTask, every_hours=6)
-    bili_sched.add_daily_jobs(OpenSilverBoxTask, every_hours=6)
-    bili_sched.add_daily_jobs(RecvDailyBagTask, every_hours=3)
-    bili_sched.add_daily_jobs(SignTask, every_hours=6)
-    bili_sched.add_daily_jobs(WatchTvTask, every_hours=6)
-    bili_sched.add_daily_jobs(SignFansGroupsTask, every_hours=6)
-    bili_sched.add_daily_jobs(SendGiftTask, every_hours=2)
-    bili_sched.add_daily_jobs(ExchangeSilverCoinTask, every_hours=6)
+    bili_sched.add_daily_jobs(HeartBeatTask, every_hours=6)  # 心跳
+    bili_sched.add_daily_jobs(OpenSilverBoxTask, every_hours=6)  # 每日开宝箱任务
+    bili_sched.add_daily_jobs(RecvDailyBagTask, every_hours=3)  #
+    bili_sched.add_daily_jobs(SignTask, every_hours=6)  # 直播签到
+    bili_sched.add_daily_jobs(WatchTvTask, every_hours=6)  # 双端观看任务
+    bili_sched.add_daily_jobs(SignFansGroupsTask, every_hours=6)  # 签名粉丝组任务
+    bili_sched.add_daily_jobs(SendGiftTask, every_hours=2)  # 送礼物的任务
+    bili_sched.add_daily_jobs(ExchangeSilverCoinTask, every_hours=6)  # 硬币兑换
     bili_sched.add_daily_jobs(JudgeCaseTask, every_hours=0.75)
-    bili_sched.add_daily_jobs(BiliMainTask, every_hours=4)
-    bili_sched.add_daily_jobs(MangaSignTask, every_hours=6)
-    bili_sched.add_daily_jobs(ShareComicTask, every_hours=6)
+    bili_sched.add_daily_jobs(BiliMainTask, every_hours=4)  # 主任务
+    bili_sched.add_daily_jobs(MangaSignTask, every_hours=6)  # 漫画签到
+    bili_sched.add_daily_jobs(ShareComicTask, every_hours=6)#漫画分享任务
     bili_sched.add_daily_jobs(DahuiyuanTask, every_hours=6)
 
 
@@ -105,6 +110,8 @@ if area_duplicated:
     area_ids *= 2
 bili_statistics.init(area_num=len(area_ids), area_duplicated=area_duplicated)
 default_roomid = other_control['default_monitor_roomid']
+
+
 ############################################################################
 ############################################################################
 # 👇录入 monitors
@@ -153,7 +160,6 @@ danmu_printer, monitors = loop.run_until_complete(init_monitors())
 
 
 bili_sched.init(monitors=monitors, sleep_ranges=dict_ctrl['other_control']['sleep_ranges'])
-
 
 # 初始化控制台
 if sys.platform != 'linux' or signal.getsignal(signal.SIGHUP) == signal.SIG_DFL:

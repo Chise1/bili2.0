@@ -27,6 +27,7 @@ def check_sign(data_dict:dict):
     :param data_dict:
     :return:
     """
+    print("获取数据:",data_dict)
     sign=data_dict.pop('sign')
     if not sign:
         return False
