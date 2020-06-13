@@ -20,7 +20,7 @@ from main import run
 
 class Client(WebsocketClient):
     account_pipe: Dict[str, Pipe] = {}
-    pro_list: Dict[int, Process] = {}
+    pro_dict: Dict[int, Process] = {}
     cbk: Optional[Callable] = None  # 获取信息之后如果该参数不为None则调用
 
     def register_cbk(self, cbk: Callable):
@@ -69,10 +69,11 @@ class Client(WebsocketClient):
     def work(self, address):
         users = get_all_userInfo()
         for user_info in users:
-            parent_pipe, child_pipe = Pipe()  #
-            self.account_pipe[user_info['id']] = (parent_pipe, child_pipe)
-            process = self.create_process(child_pipe, user_info)
-            self.pro_list[user_info['id']] = process
+            if user_info['status']:
+                parent_pipe, child_pipe = Pipe()  #
+                self.account_pipe[user_info['id']] = (parent_pipe, child_pipe)
+                process = self.create_process(child_pipe, user_info)
+                self.pro_dict[user_info['id']] = process
         self.run(address + "/" + server_id.replace('-', '') + "/")
 
 
@@ -80,15 +81,20 @@ def test_cbk(self: Client, msg: dict):
     print("获取msg:", msg)
 
     if msg['info'] == "restart":  # 重启进程
-        for i in self.pro_list:
+        for i in self.pro_dict:
             if i == msg['account_id']:
-                self.pro_list[i].terminate()
+                self.pro_dict[i].terminate()
                 # 更新user_info数据
                 # 重启
                 user_info = get_userInfo(msg['account_id'])
-                self.pro_list[i] = self.create_process(self.account_pipe[i][1], user_info=user_info)
+                self.pro_dict[i] = self.create_process(self.account_pipe[i][1], user_info=user_info)
         else:
-            raise Exception("未找到对应account！")
+            user_info = get_userInfo(msg['account_id'])
+            if user_info['status']:
+                parent_pipe, child_pipe = Pipe()  #
+                self.account_pipe[user_info['id']] = (parent_pipe, child_pipe)
+                process = self.create_process(child_pipe, user_info)
+                self.pro_dict[user_info['id']] = process
     raise Exception("未找到对应指令")
 
 
