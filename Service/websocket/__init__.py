@@ -78,8 +78,7 @@ class Client(WebsocketClient):
 
 
 def test_cbk(self: Client, msg: dict):
-    print("获取msg:", msg)
-
+    # print("获取msg:", msg)
     if msg['info'] == "restart":  # 重启进程
         for i in self.pro_dict:
             if i == msg['account_id']:
@@ -91,11 +90,11 @@ def test_cbk(self: Client, msg: dict):
         else:
             user_info = get_userInfo(msg['account_id'])
             if user_info['status']:
-                parent_pipe, child_pipe = Pipe()  #
+                parent_pipe, child_pipe = Pipe()
                 self.account_pipe[user_info['id']] = (parent_pipe, child_pipe)
                 process = self.create_process(child_pipe, user_info)
                 self.pro_dict[user_info['id']] = process
-    raise Exception("未找到对应指令")
+    # raise Exception("未找到对应指令")
 
 
 if __name__ == '__main__':
