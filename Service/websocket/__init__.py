@@ -69,6 +69,7 @@ class Client(WebsocketClient):
     def work(self, address):
         users = get_all_userInfo()
         for user_info in users:
+            print(user_info)
             if user_info['status']:
                 parent_pipe, child_pipe = Pipe()  #
                 self.account_pipe[user_info['id']] = (parent_pipe, child_pipe)
@@ -78,13 +79,14 @@ class Client(WebsocketClient):
 
 
 def test_cbk(self: Client, msg: dict):
-    # print("获取msg:", msg)
+    print("获取msg:", msg)
     if msg['info'] == "restart":  # 重启进程
         for i in self.pro_dict:
             if i == msg['account_id']:
                 self.pro_dict[i].terminate()
                 # 更新user_info数据
                 # 重启
+                print("重启")
                 user_info = get_userInfo(msg['account_id'])
                 self.pro_dict[i] = self.create_process(self.account_pipe[i][1], user_info=user_info)
         else:
