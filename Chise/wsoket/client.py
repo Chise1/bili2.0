@@ -78,4 +78,4 @@ class WebsocketClient(object):
             print(self.is_running)
             if not self.is_running:
                 self.ws.run_forever()
-            time.sleep(300)  # 如果掉线则重启websocket
+            time.sleep(10)  # 如果掉线则重启websocket

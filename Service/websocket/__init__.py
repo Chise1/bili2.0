@@ -84,11 +84,18 @@ def test_cbk(self: Client, msg: dict):
         for i in self.pro_dict:
             if i == msg['account_id']:
                 self.pro_dict[i].terminate()
+                self.pro_dict[i].join()  # 清除任务
+                # 删除任务对应的存储
+                self.pro_dict.pop(i)
                 # 更新user_info数据
                 # 重启
                 print("重启")
                 user_info = get_userInfo(msg['account_id'])
-                self.pro_dict[i] = self.create_process(self.account_pipe[i][1], user_info=user_info)
+                if user_info['status']:
+                    self.pro_dict[i] = self.create_process(self.account_pipe[i][1], user_info=user_info)
+                else:
+                    self.account_pipe.pop(i)
+                break
         else:
             user_info = get_userInfo(msg['account_id'])
             if user_info['status']:

@@ -3,6 +3,8 @@ import signal
 import threading
 import asyncio
 import time
+from copy import deepcopy
+
 import aiohttp
 import conf_loader
 import notifier
@@ -36,7 +38,8 @@ def run(user_info: dict, pipe: connection.Connection):
     """
     notifier.register_pipe(pipe)
     user_info['password'] = rsa_long_decrypt(eval(user_info['password']))
-    print(user_info['password'])
+    user_info_copy = deepcopy(user_info)
+    # print(user_info['password'])
     loop = asyncio.get_event_loop()
     dict_bili = conf_loader.read_bili()
     dict_color = conf_loader.read_color()
@@ -60,7 +63,7 @@ def run(user_info: dict, pipe: connection.Connection):
                                force_sleep=bili_sched.force_sleep)
         notifier.init(users=users)
         username = user_info['username']
-        await notifier.add_user(user_info=user_info,
+        await notifier.add_user(user_info=user_info_copy,
                                 custom_task_control=custom_task_control.get(username, {}),
                                 custom_task_arrangement=custom_task_arrangement.get(username, {}))
 
@@ -96,13 +99,17 @@ def run(user_info: dict, pipe: connection.Connection):
         # bili_sched.add_daily_jobs(SignFansGroupsTask, every_hours=6)  # 签名粉丝组任务
         # bili_sched.add_daily_jobs(SendGiftTask, every_hours=2)  # 送礼物的任务
         # bili_sched.add_daily_jobs(ExchangeSilverCoinTask, every_hours=6)  # 硬币兑换
-        bili_sched.add_daily_jobs(JudgeCaseTask, every_hours=0.75)
+        bili_sched.add_daily_jobs(JudgeCaseTask, every_hours=0.75)  # 风纪委员任务
         bili_sched.add_daily_jobs(BiliMainTask, every_hours=4)  # 主任务
         # bili_sched.add_daily_jobs(MangaSignTask, every_hours=6)  # 漫画签到
         # bili_sched.add_daily_jobs(ShareComicTask, every_hours=6)  # 漫画分享任务
         bili_sched.add_daily_jobs(DahuiyuanTask, every_hours=6)
 
-    add_daily_jobs(user_info.get('tasks') or [])
+    if user_info.get('tasks'):
+        tasks = user_info.get('tasks')
+    else:
+        tasks = []
+    add_daily_jobs(tasks)
     ############################################################################
     ############################################################################
     loop.run_until_complete(notifier.exec_task(LoginTask))
@@ -181,10 +188,16 @@ def run(user_info: dict, pipe: connection.Connection):
 
 from multiprocessing import Process, Pipe
 from Service.user_info import get_all_userInfo, get_userInfo
+#
+# if __name__ == '__main__':
+#     users = get_all_userInfo()
+#     pipe0, pip1 = Pipe()
+#     for user_info in users:
+#         Process(target=run, args=(user_info, pip1)).start()
+#     time.sleep(100)
+from Service.websocket import Client, test_cbk
 
 if __name__ == '__main__':
-    users = get_all_userInfo()
-    pipe0, pip1 = Pipe()
-    for user_info in users:
-        Process(target=run, args=(user_info, pip1)).start()
-    time.sleep(100)
+    client = Client()
+    client.register_cbk(test_cbk)
+    client.work("ws://127.0.0.1:8000/ws/Slaver")
