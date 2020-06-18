@@ -70,3 +70,24 @@ def update_userInfo(user_id, dict_new: dict):
     ret = requests.put(BASE_URL + "accountInfo/" + str(user_id) + "/", data=req)
     assert ret.status_code == 200, "请求错误：" + str(ret.json())
     return ret.json()
+
+
+def write_account_log(username,  msg, num, ):
+    """
+    写入日志
+    :param task_id:
+    :param msg:
+    :param num:
+    :param status:
+    :return:
+    """
+    data = {
+        "username": username,
+        "msg": msg,
+        "num": num,
+        "server_id": server_id,
+        "sign": "test_sign"
+    }
+    print(requests.post(BASE_URL.replace('Slaver/','') + "bili/log/", data=data).json())
+    # assert ret.status_code == 200, "请求错误：" + str(ret.json())
+    # return ret.json()

@@ -53,9 +53,6 @@ class ConfLoader:
         :param user_id:
         :return:
         """
-
-        print(dict_new)
-        print("登录成功：", user_id)
         update_userInfo(user_id,dict_new)
         # dict_user = self.toml_load(self.file_user)
         # for i, value in dict_new.items():

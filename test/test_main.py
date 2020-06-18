@@ -62,7 +62,9 @@ def run(user_info: dict, pipe: connection.Connection):
         await notifier.add_user(user_info=user_info_copy,
                                 custom_task_control=custom_task_control.get(username, {}),
                                 custom_task_arrangement=custom_task_arrangement.get(username, {}))
+
     loop.run_until_complete(init_users())
+
     ############################################################################
     ############################################################################
     # 👇重复任务录入程序
@@ -70,35 +72,19 @@ def run(user_info: dict, pipe: connection.Connection):
     # 时间间隔为小时，同时每次休眠结束都会计时归零，重新从当前时间计算时间间隔
     # 下面表示每隔多少小时执行一次
     def add_daily_jobs(tasks):
-        for task in tasks:
-            if task['status']:
-                if task['frequency_unit'] == 2:
-                    fre = 1
-                elif task['frequency_unit'] == 1:
-                    fre = 60
-                elif task['frequency_unit'] == 3:
-                    fre = 1 / 24
-                elif task['frequency_unit'] == 0:
-                    fre = 3600
-                else:
-                    raise Exception("fre不能为空！")
-                    # fre = 1
-                bili_sched.add_daily_jobs(globals()[task['task']], every_hours=task['frequency_num'] / fre)  # 心跳
-                print("成功添加任务：", task['task'])
         bili_sched.add_daily_jobs(HeartBeatTask, every_hours=6)  # 心跳
-        # bili_sched.add_daily_jobs(OpenSilverBoxTask, every_hours=6)  # 每日开宝箱任务
+        bili_sched.add_daily_jobs(OpenSilverBoxTask, every_hours=6)  # 每日开宝箱任务
         bili_sched.add_daily_jobs(RecvDailyBagTask, every_hours=3)  #
-        # bili_sched.add_daily_jobs(SignTask, every_hours=6)  # 直播签到
-        # bili_sched.add_daily_jobs(WatchTvTask, every_hours=6)  # 双端观看任务
-        # bili_sched.add_daily_jobs(SignFansGroupsTask, every_hours=6)  # 签名粉丝组任务
-        # bili_sched.add_daily_jobs(SendGiftTask, every_hours=2)  # 送礼物的任务
-        # bili_sched.add_daily_jobs(ExchangeSilverCoinTask, every_hours=6)  # 硬币兑换
+        bili_sched.add_daily_jobs(SignTask, every_hours=6)  # 直播签到
+        bili_sched.add_daily_jobs(WatchTvTask, every_hours=6)  # 双端观看任务
+        bili_sched.add_daily_jobs(SignFansGroupsTask, every_hours=6)  # 签名粉丝组任务
+        bili_sched.add_daily_jobs(SendGiftTask, every_hours=2)  # 送礼物的任务
+        bili_sched.add_daily_jobs(ExchangeSilverCoinTask, every_hours=6)  # 硬币兑换
         bili_sched.add_daily_jobs(JudgeCaseTask, every_hours=0.75)  # 风纪委员任务
         bili_sched.add_daily_jobs(BiliMainTask, every_hours=4)  # 主任务
-        # bili_sched.add_daily_jobs(MangaSignTask, every_hours=6)  # 漫画签到
-        # bili_sched.add_daily_jobs(ShareComicTask, every_hours=6)  # 漫画分享任务
+        bili_sched.add_daily_jobs(MangaSignTask, every_hours=6)  # 漫画签到
+        bili_sched.add_daily_jobs(ShareComicTask, every_hours=6)  # 漫画分享任务
         bili_sched.add_daily_jobs(DahuiyuanTask, every_hours=6)
-
     if user_info.get('tasks'):
         tasks = user_info.get('tasks')
     else:

@@ -251,7 +251,7 @@ class Notifier:
             handle_unique = self._unique_work
 
         check_results = await handle_check(task.check, self._users.superuser, *args, **kwargs)
-        print('check_results:', task, check_results)
+        # print('check_results:', task, check_results)
         if check_results is not None:
             return await handle_works(task, handle_work, handle_unique, func_work, check_results, need_results)
 

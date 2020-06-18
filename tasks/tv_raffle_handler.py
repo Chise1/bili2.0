@@ -21,11 +21,10 @@ class TvRaffleJoinTask(Forced, DontWait, Multi):
             max_wait = raffle['time'] - 10
             # 处理一些重复
             if not bili_statistics.is_raffleid_duplicate(raffle_id):
-                user.info(f'确认获取到小电视抽奖 {raffle_id}', with_userid=False)
+                # user.info(f'确认获取到小电视抽奖 {raffle_id}', with_userid=False)
                 next_step_setting = (-2, (raffle['time_wait'], max_wait), real_roomid, raffle_id, raffle_type)
                 next_step_settings.append(next_step_setting)
                 bili_statistics.add2raffle_ids(raffle_id, 'TV')
-                
         return next_step_settings
         
     @staticmethod
@@ -37,7 +36,7 @@ class TvRaffleJoinTask(Forced, DontWait, Multi):
             data = json_rsp['data']
             gift_name = data['award_name']
             gift_num = data['award_num']
-            user.info(f'小电视({raffle_id})的参与结果: {gift_name}X{gift_num}')
+            user.info(f'小电视({raffle_id})的参与结果: {gift_name}X{gift_num}',num=gift_num)
             bili_statistics.add2results(gift_name, user.id, gift_num)
         elif code == -403 and '拒绝' in json_rsp['msg']:
             user.fall_in_jail()

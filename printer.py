@@ -2,19 +2,23 @@ import sys
 import time
 from typing import Optional
 from collections import defaultdict
+
+from Service.user_info import write_account_log
+
 if sys.platform == 'ios':
     import console
 
-        
+
 class BiliLogger:
     __slots__ = ()
+
     # 格式化数据
     @staticmethod
     def format(
             *objects,
             extra_info: Optional[str] = None,
             need_timestamp: bool = True):
-        timestamp = time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime())\
+        timestamp = time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()) \
             if need_timestamp else '>'
         extra_info = f' ({extra_info})' if extra_info is not None else ''
         if objects:
@@ -23,47 +27,32 @@ class BiliLogger:
             return (f'{timestamp} {first_value}{extra_info}', *others)
         return f'{timestamp} NULL{extra_info}',
 
-    def info(
-            self,
-            *objects,
-            extra_info: Optional[str] = None,
-            need_timestamp: bool = True):
-        texts = self.format(
-            *objects,
-            extra_info=extra_info,
-            need_timestamp=need_timestamp)
-        for i in texts:
-            print(i)
+    def info(self, *objects, extra_info: Optional[str] = None, need_timestamp: bool = True, username=None, num=0):
+        texts = self.format(*objects, extra_info=extra_info, need_timestamp=need_timestamp)
+        if username:
+            for i in texts:
+                write_account_log(username, i, num)
+        else:
+            for i in texts:
+                print(i)
 
-    def warn(
-            self,
-            *objects,
-            extra_info: Optional[str] = None):
-        texts = self.format(
-            *objects,
-            extra_info=extra_info,
-            need_timestamp=True)
+    def warn(self, *objects, extra_info: Optional[str] = None):
+        texts = self.format(*objects, extra_info=extra_info, need_timestamp=True)
         for i in texts:
             print(i, file=sys.stderr)
-        
+
         with open('bili.log', 'a', encoding='utf-8') as f:
             for i in texts:
                 f.write(f'{i}\n')
 
-    def debug(
-            self,
-            *objects,
-            **kwargs):
+    def debug(self, *objects, **kwargs):
         self.warn(*objects, **kwargs)
 
-    def error(
-            self,
-            *objects,
-            **kwargs):
+    def error(self, *objects, **kwargs):
         self.warn(*objects, **kwargs)
         sys.exit(-1)
-    
-    
+
+
 class PythonistaPrinter(BiliLogger):
     __slots__ = ('dic_color', 'danmu_control',)
 
@@ -74,21 +63,21 @@ class PythonistaPrinter(BiliLogger):
             'others': defaultdict(list)
         }
         self.danmu_control = False
-    
+
     def init_config(self, dic_color, print_control_danmu):
         self.dic_color = dic_color
         self.danmu_control = print_control_danmu
-        
+
     def control_printer(self, danmu_control=None):
         if danmu_control is not None:
             self.danmu_control = danmu_control
-            
+
     # "#969696"
     @staticmethod
     def hex_to_rgb_percent(hex_str):
         return tuple(
-            int(n, 16)/255 for n in (hex_str[1:3], hex_str[3:5], hex_str[5:7]))
-        
+            int(n, 16) / 255 for n in (hex_str[1:3], hex_str[3:5], hex_str[5:7]))
+
     # 弹幕 礼物 。。。。type
     def print_danmu(self, danmu_msg: dict):
         if not self.danmu_control:
@@ -131,7 +120,7 @@ class PythonistaPrinter(BiliLogger):
         except IndexError:
             print("# 小电视降临本直播间")
             list_color.append(self.dic_color['others']['default_name'])
-            
+
         list_msg.append(danmu_msg_info[1])
         list_color.append([])
         for i, j in zip(list_msg, list_color):
@@ -140,20 +129,20 @@ class PythonistaPrinter(BiliLogger):
         print()
         console.set_color()
 
-                
+
 class NormalPrinter(BiliLogger):
     __slots__ = ('danmu_control',)
 
     def __init__(self):
         self.danmu_control = False
-    
+
     def init_config(self, _, print_control_danmu):
         self.danmu_control = print_control_danmu
-        
+
     def control_printer(self, danmu_control=None):
         if danmu_control is not None:
             self.danmu_control = danmu_control
-        
+
     def print_danmu(self, danmu_msg: dict):
         if not self.danmu_control:
             return
@@ -171,7 +160,7 @@ class NormalPrinter(BiliLogger):
                     list_msg.append('爷 ')
             if danmu_msg_info[2][2] == 1:
                 list_msg.append('房管 ')
-                
+
             # 勋章
             if danmu_msg_info[3]:
                 list_msg.append(f'{danmu_msg_info[3][1]}|{danmu_msg_info[3][0]} ')
@@ -187,11 +176,11 @@ class NormalPrinter(BiliLogger):
                 pass
         except IndexError:
             print("# 小电视降临本直播间")
-            
+
         list_msg.append(danmu_msg_info[1])
         print(''.join(list_msg))
 
-  
+
 if sys.platform == 'ios':
     printer = PythonistaPrinter()
 else:
@@ -201,15 +190,15 @@ else:
 def init_config(dic_color, print_control_danmu):
     printer.init_config(dic_color, print_control_danmu)
 
- 
+
 def print_danmu(danmu_msg: dict):
     printer.print_danmu(danmu_msg)
-    
-    
+
+
 def control_printer(danmu_control=None, _=None):
     printer.control_printer(danmu_control)
 
-            
+
 def info(*objects, **kwargs):
     printer.info(*objects, **kwargs)
 

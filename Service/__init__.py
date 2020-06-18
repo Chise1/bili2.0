@@ -7,6 +7,7 @@
 @Software: PyCharm
 @info    :服务端操作
 """
+import os
 BASE_URL="http://127.0.0.1:8000/Slaver/"
-server_id="0612c18a-b321-42cf-a2d1-09d1d4e1be1a"
+server_id= os.getenv('server_id') or  "0612c18a-b321-42cf-a2d1-09d1d4e1be1a"
 APPSERECT="560c52ccd288fed045859ed18bffd973"

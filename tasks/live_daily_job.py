@@ -26,7 +26,7 @@ class HeartBeatTask(Sched, DontWait, Unique):
         while True:
             json_rsp0 = await user.req_s(HeartBeatReq.pc_heartbeat, user)
             json_rsp1 = await user.req_s(HeartBeatReq.app_heartbeat, user)
-            user.info(f'心跳包(5分钟左右间隔){json_rsp0} {json_rsp1}')
+            # user.info(f'心跳包(5分钟左右间隔){json_rsp0} {json_rsp1}')
             await asyncio.sleep(300)
  
                
@@ -40,10 +40,9 @@ class OpenSilverBoxTask(Sched, DontWait, Unique):
     @staticmethod
     async def work(user):
         while True:
-            user.info("检查宝箱状态")
+            # user.info("检查宝箱状态")
             json_rsp_check = await user.req_s(OpenSilverBoxReq.check, user)
             code_check = json_rsp_check['code']
-
             if not code_check:
                 json_rsp_open = await user.req_s(OpenSilverBoxReq.join, user)
                 code_open = json_rsp_open['code']

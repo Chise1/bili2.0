@@ -152,24 +152,24 @@ class ConsoleCmd(Cmd):
         print('|　７　获取直播分站个人的基本信息　　|')
         print('|　８　检查风纪委今日自动投票的情况　|')
         print('|　９　检查脚本判断的用户小黑屋情况　|')
-
         print('|１１　当前拥有的扭蛋币　　　　　　　|')
         print('|１２　开扭蛋币（一、十、百）　　　　|')
         print('|１３　直播间的长短号码的转化　　　　|')
         print('|１４　发送弹幕　　　　　　　　　　　|')
         print('|１５　切换监听的直播间　　　　　　　|')
         print('|１６　控制弹幕的开关　　　　　　　　|')
-
         print('|２１　赠指定总数的辣条到房间　　　　|')
         print('|２２　银瓜子全部购买辣条并送到房间　|')
         print('|２３　购买勋章（使用银瓜子或者硬币）|')
         print(' ￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣ ')
 
     def default(self, line):
-        self.guide_of_console()
+        pass
+        # self.guide_of_console()
 
     def emptyline(self):
-        self.guide_of_console()
+        pass
+        # self.guide_of_console()
 
     def onecmd(self, *args, **kwargs):
         try:
@@ -254,8 +254,7 @@ class ConsoleCmd(Cmd):
         real_roomid, = self.parse(arg, self._parser_15)
         self.default_roomid = real_roomid
 
-        self.exec_func_threads(
-            FuncCore(self._printer_danmu.reset_roomid, real_roomid))
+        self.exec_func_threads(FuncCore(self._printer_danmu.reset_roomid, real_roomid))
 
     def do_16(self, arg):
         ctrl, = self.parse(arg, self._parser_16)

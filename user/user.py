@@ -5,6 +5,7 @@ from typing import Callable, Optional
 import printer
 import conf_loader
 import exceptions
+from Service.user_info import write_account_log
 from web_session import WebSession
 from tasks.login import LoginTask
 from .platform import PcPlatform, AppPlatform, TvPlatform
@@ -35,23 +36,17 @@ class User:
         self.task_ctrl = task_ctrl
         self.task_arrangement = task_arrangement
         self.is_in_jail = False  # 是否小黑屋
-
         self.bililive_session = WebSession()
         self.login_session = WebSession()
         self.other_session = WebSession()
-
         # 每个user里面都分享了同一个dict，必须要隔离，否则更新cookie这些的时候会互相覆盖
         self.pc = PcPlatform(dict_bili['pc_headers'].copy())
         self.app = AppPlatform(dict_bili['app_headers'].copy(), dict_bili['app_params'])
         self.tv = TvPlatform(dict_bili['tv_headers'].copy(), dict_bili['tv_params'])
-
         self.dict_user = dict_user
-
         self.update_login_data(dict_user)
-
         self._waiting_login = None
         self._loop = asyncio.get_event_loop()
-
         self.repost_del_lock = asyncio.Lock()  # 在follow与unfollow过程中必须保证安全(repost和del整个过程加锁)
         dyn_lottery_friends = [(str(uid), name) for uid, name in task_ctrl['dyn_lottery_friends'].items()]
         self.dyn_lottery_friends = dyn_lottery_friends  # list (uid, name)
@@ -68,24 +63,14 @@ class User:
     def is_online(self):
         return self.pc.headers['cookie'] and self.app.headers['cookie'] and self.tv.headers['cookie']
 
-    def info(
-            self,
-            *objects,
-            with_userid=True,
-            **kwargs):
+    def info(self, *objects, with_userid=True, **kwargs):
         if with_userid:
-            printer.info(
-                *objects,
-                **kwargs,
-                extra_info=f'用户id:{self.id} 名字:{self.alias}')
+            printer.info(*objects, **kwargs, extra_info=f'用户id:{self.id} 名字:{self.alias}', username=self.name)
         else:
             printer.info(*objects, **kwargs)
 
     def warn(self, *objects, **kwargs):
-        printer.warn(
-            *objects,
-            **kwargs,
-            extra_info=f'用户id:{self.id} 名字:{self.alias}')
+        printer.warn(*objects, **kwargs, extra_info=f'用户id:{self.id} 名字:{self.alias}')
 
     def app_sign(self, extra_params: Optional[dict] = None) -> dict:
         return self.app.sign(extra_params)
@@ -128,7 +113,7 @@ class User:
 
     def out_of_jail(self):
         self.is_in_jail = False
-        self.info(f'抽奖脚本尝试性设置用户已出小黑屋（如果实际没出还会再判定进去）')
+        # self.info(f'抽奖脚本尝试性设置用户已出小黑屋（如果实际没出还会再判定进去）')
 
     def print_status(self):
         jail_status = '恭喜中奖' if self.is_in_jail else '自由之身'

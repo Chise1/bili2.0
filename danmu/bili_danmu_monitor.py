@@ -70,7 +70,7 @@ class DanmuRaffleMonitor(bili_danmu.WsDanmuClient):
         self._room_id = await notifier.exec_func(
             UtilsTask.get_room_by_area,
             self._area_id)
-        print(f'{self._area_id} 号数据连接选择房间（{self._room_id}）')
+        # print(f'{self._area_id} 号数据连接选择房间（{self._room_id}）')
         if self._room_id is None:
             print(f'{self._area_id} 号数据连接准备部分发生致命错误')
             self._closed = True  # 内部关闭，不再重连
@@ -106,19 +106,19 @@ class DanmuRaffleMonitor(bili_danmu.WsDanmuClient):
                     broadcast = 'nmb'
                     raffle_num = 1
                     raffle_name = '小电视'
-                    print(f'{self._area_id} 号数据连接检测到{real_roomid:^9}的{raffle_name}')
+                    # print(f'{self._area_id} 号数据连接检测到{real_roomid:^9}的{raffle_name}')
                     raffle_handler.push2queue(TvRaffleJoinTask, real_roomid)
                     broadcast_type = 0 if broadcast == '全区' else 1
                     bili_statistics.add2pushed_raffles(raffle_name, broadcast_type, raffle_num)
             elif msg_type == 3:
                 raffle_name = self.NOTICE_MSG_GUARD_PATTERN.match(msg_common).group(1)
-                print(f'{self._area_id} 号数据连接检测到{real_roomid:^9}的{raffle_name}')
+                # print(f'{self._area_id} 号数据连接检测到{real_roomid:^9}的{raffle_name}')
                 raffle_handler.push2queue(GuardRafflJoinTask, real_roomid)
                 broadcast_type = 0 if raffle_name == '总督' else 2
                 bili_statistics.add2pushed_raffles(raffle_name, broadcast_type)
             elif msg_type == 6:
                 raffle_name = '二十倍节奏风暴'
-                print(f'{self._area_id} 号数据连接检测到{real_roomid:^9}的{raffle_name}')
+                # print(f'{self._area_id} 号数据连接检测到{real_roomid:^9}的{raffle_name}')
                 raffle_handler.push2queue(StormRaffleJoinTask, real_roomid)
                 bili_statistics.add2pushed_raffles(raffle_name)
         return True

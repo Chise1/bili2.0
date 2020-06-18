@@ -1,6 +1,6 @@
 import asyncio
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Type
 
 import schedule
 
@@ -41,9 +41,9 @@ class BiliSched:
                 return
 
     # 这是日常任务装载
-    def add_daily_jobs(self, task, every_hours: float, *args, **kwargs):
+    def add_daily_jobs(self, task: Type[object], every_hours: float, *args, **kwargs):
         self._sched_daily_jobs.every(every_hours).hours.do(
-            notifier.exec_task_no_wait, task, *args, **kwargs)
+            notifier.exec_task_no_wait, task, *args, **kwargs).tag(task.__class__.__name__)
 
     @staticmethod
     def start_new_day():
@@ -106,7 +106,7 @@ class BiliSched:
                     if not self._sched_running:
                         break
                     idle_seconds = min(self._sched_daily_jobs.idle_seconds, self._sched_shedule.idle_seconds) + 1
-                    print(f'Will sleep {idle_seconds}s，等待任务装载')
+                    # print(f'Will sleep {idle_seconds}s，等待任务装载')
                     await asyncio.sleep(idle_seconds)
             await self.pause()
             idle_seconds = self._sched_shedule.idle_seconds + 1

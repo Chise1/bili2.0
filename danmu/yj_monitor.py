@@ -18,11 +18,11 @@ class TcpYjMonitorClient(yj_monitor.TcpDanmuClient):
         raffle_id = data['raffle_id']
         raffle_roomid = data['room_id']
         if raffle_type == 'STORM':
-            print(f'{self._area_id} 号数据连接检测到{raffle_roomid:^9}的节奏风暴(id: {raffle_id})')
+            # print(f'{self._area_id} 号数据连接检测到{raffle_roomid:^9}的节奏风暴(id: {raffle_id})')
             raffle_handler.exec_at_once(StormRaffleJoinTask, 0, raffle_id)
             bili_statistics.add2pushed_raffles('Yj协同节奏风暴', 2)
         elif raffle_type == 'GUARD':
-            print(f'{self._area_id} 号数据连接检测到{raffle_roomid:^9}的大航海(id: {raffle_id})')
+            # print(f'{self._area_id} 号数据连接检测到{raffle_roomid:^9}的大航海(id: {raffle_id})')
             json_rsp = {
                 'data': {
                     'guard': [data['other_raffle_data']]
@@ -32,7 +32,7 @@ class TcpYjMonitorClient(yj_monitor.TcpDanmuClient):
             raffle_handler.exec_at_once(GuardRafflJoinTask, raffle_roomid, json_rsp)
             bili_statistics.add2pushed_raffles('Yj协同大航海', 2)
         elif raffle_type == 'PK':
-            print(f'{self._area_id} 号数据连接检测到{raffle_roomid:^9}的大乱斗(id: {raffle_id})')
+            # print(f'{self._area_id} 号数据连接检测到{raffle_roomid:^9}的大乱斗(id: {raffle_id})')
             json_rsp = {
                 'data': {
                     'pk': [data['other_raffle_data']]

@@ -29,10 +29,8 @@ class StormRaffleJoinTask(Forced, DontWait, Multi):
                 user.info(f'确认获取到飓风暴抽奖 {raffle_id}', with_userid=False)
                 next_step_setting = (-2, (1, 3), room_id, raffle_id)
                 next_step_settings.append(next_step_setting)
-                
                 next_step_setting = (-2, (2, 4), room_id, raffle_id)
                 next_step_settings.append(next_step_setting)
-                
                 bili_statistics.add2raffle_ids(raffle_id/1000000, 'STORM')
         return next_step_settings
             

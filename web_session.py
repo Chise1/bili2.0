@@ -113,10 +113,7 @@ class WebSession:
                 print(body)
                 raise LogoutError(msg='提示没有登陆')
 
-    async def request_binary(self,
-                             method,
-                             url,
-                             **kwargs) -> bytes:
+    async def request_binary(self, method, url, **kwargs) -> bytes:
         return await self._req(self._recv_bytes, method, url, **kwargs)
 
     async def request_text(self,
