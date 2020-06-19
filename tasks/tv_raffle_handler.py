@@ -36,9 +36,9 @@ class TvRaffleJoinTask(Forced, DontWait, Multi):
             data = json_rsp['data']
             gift_name = data['award_name']
             gift_num = data['award_num']
-            user.info(f'小电视({raffle_id})的参与结果: {gift_name}X{gift_num}',num=gift_num)
+            user.info(f'小电视的参与结果: {gift_name}X{gift_num}',num=gift_num)
             bili_statistics.add2results(gift_name, user.id, gift_num)
         elif code == -403 and '拒绝' in json_rsp['msg']:
             user.fall_in_jail()
         else:
-            user.info(f'小电视({raffle_id})的参与结果: {json_rsp}')
+            user.info(f'小电视的参与结果: {json_rsp}')

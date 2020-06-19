@@ -65,12 +65,12 @@ class User:
 
     def info(self, *objects, with_userid=True, **kwargs):
         if with_userid:
-            printer.info(*objects, **kwargs, extra_info=f'用户id:{self.id} 名字:{self.alias}', username=self.name)
+            printer.info(*objects, **kwargs, extra_info=f'账户:{self.alias}', username=self.name)
         else:
             printer.info(*objects, **kwargs)
 
     def warn(self, *objects, **kwargs):
-        printer.warn(*objects, **kwargs, extra_info=f'用户id:{self.id} 名字:{self.alias}')
+        printer.warn(*objects, **kwargs, extra_info=f'账户:{self.alias}')
 
     def app_sign(self, extra_params: Optional[dict] = None) -> dict:
         return self.app.sign(extra_params)

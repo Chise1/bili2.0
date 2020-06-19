@@ -43,7 +43,7 @@ class StormRaffleJoinTask(Forced, DontWait, Multi):
             data = json_rsp['data']
             gift_name = data["gift_name"]
             gift_num = data["gift_num"]
-            user.info(f'飓风暴({raffle_id})的参与结果: {gift_name}X{gift_num}')
+            user.info(f'飓风暴的参与结果: {gift_name}X{gift_num}')
             bili_statistics.add2results(gift_name, user.id, gift_num)
             return
         print(json_rsp)
