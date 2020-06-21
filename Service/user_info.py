@@ -88,6 +88,7 @@ def write_account_log(username,  msg, num, ):
         "server_id": server_id,
         "sign": "test_sign"
     }
+    print(msg)
     print(requests.post(BASE_URL.replace('Slaver/','') + "bili/log/", data=data).json())
     # assert ret.status_code == 200, "请求错误：" + str(ret.json())
     # return ret.json()

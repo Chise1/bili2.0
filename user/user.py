@@ -16,15 +16,9 @@ from .platform import PcPlatform, AppPlatform, TvPlatform
 class User:
     _ids = count(0)
     __slots__ = (
-        'id', 'force_sleep', 'name', 'password', 'alias', 'task_ctrl',
-        'task_arrangement', 'is_in_jail',
-
-        'bililive_session', 'login_session', 'other_session',
-
-        'dict_user', 'pc', 'app', 'tv', 'repost_del_lock',
-        'dyn_lottery_friends',
-        '_waiting_login', '_loop'
-    )
+    'id', 'force_sleep', 'name', 'password', 'alias', 'task_ctrl', 'task_arrangement', 'is_in_jail', 'bililive_session',
+    'login_session', 'other_session', 'dict_user', 'pc', 'app', 'tv', 'repost_del_lock', 'dyn_lottery_friends',
+    '_waiting_login', '_loop')
 
     def __init__(
             self, dict_user: dict, task_ctrl: dict, task_arrangement: dict, dict_bili: dict, force_sleep: Callable):
@@ -65,12 +59,13 @@ class User:
 
     def info(self, *objects, with_userid=True, **kwargs):
         if with_userid:
-            printer.info(*objects, **kwargs, extra_info=f'账户:{self.alias}', username=self.name)
+            printer.info(*objects, **kwargs, extra_info=f'', username=self.name)
+            # printer.info(*objects, **kwargs, extra_info=f'账户:{self.alias}', username=self.name)
         else:
             printer.info(*objects, **kwargs)
 
     def warn(self, *objects, **kwargs):
-        printer.warn(*objects, **kwargs, extra_info=f'账户:{self.alias}')
+        printer.warn(*objects, **kwargs, extra_info=f'',username=self.name)
 
     def app_sign(self, extra_params: Optional[dict] = None) -> dict:
         return self.app.sign(extra_params)

@@ -13,20 +13,24 @@ class BiliLogger:
     __slots__ = ()
 
     # 格式化数据
+    # @staticmethod
+    # def format(*objects, extra_info: Optional[str] = None, need_timestamp: bool = True):
+    #     timestamp = time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()) \
+    #         if need_timestamp else '>'
+    #     extra_info = f' ({extra_info})' if extra_info is not None else ''
+    #     if objects:
+    #         first_value, *others = objects
+    #         others = [f'# {i}' for i in others]
+    #         return (f'{timestamp} {first_value}{extra_info}', *others)
+    #     return f'{timestamp} NULL{extra_info}',
+
     @staticmethod
-    def format(
-            *objects,
-            extra_info: Optional[str] = None,
-            need_timestamp: bool = True):
-        timestamp = time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime()) \
-            if need_timestamp else '>'
-        extra_info = f' ({extra_info})' if extra_info is not None else ''
+    def format(*objects, extra_info: Optional[str] = None, need_timestamp: bool = True):
         if objects:
             first_value, *others = objects
             others = [f'# {i}' for i in others]
-            return (f'{timestamp} {first_value}{extra_info}', *others)
-        return f'{timestamp} NULL{extra_info}',
-
+            return (f' {first_value}{extra_info}', *others)
+        return f' NULL{extra_info}',
     def info(self, *objects, extra_info: Optional[str] = None, need_timestamp: bool = True, username=None, num=0):
         texts = self.format(*objects, extra_info=extra_info, need_timestamp=need_timestamp)
         if username:
@@ -36,9 +40,10 @@ class BiliLogger:
             for i in texts:
                 print(i)
 
-    def warn(self, *objects, extra_info: Optional[str] = None):
-        texts = self.format(*objects, extra_info=extra_info, need_timestamp=True)
+    def warn(self, *objects, extra_info: Optional[str] = None,username=None,):
+        texts = self.format(*objects, extra_info=extra_info, need_timestamp=True,)
         for i in texts:
+            write_account_log(username, i, num=0)
             print(i, file=sys.stderr)
 
         with open('bili.log', 'a', encoding='utf-8') as f:
